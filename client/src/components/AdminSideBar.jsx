@@ -1,25 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box } from "@mui/material";
+import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
 
 const AdminSidebar = () => (
-  <Box sx={{ width: 240, bgcolor: "grey.800", color: "white", p: 2 }}>
-    <Box sx={{ mb: 2 }}>
-      <Link
-        to="/admin/tasks"
-        style={{ color: "white", textDecoration: "none" }}
-      >
-        View Tasks
-      </Link>
-    </Box>
-    <Box>
-      <Link
-        to="/admin/users"
-        style={{ color: "white", textDecoration: "none" }}
-      >
-        Manage Users
-      </Link>
-    </Box>
+  <Box
+    sx={{
+      height: "100vh",
+      width: 240,
+      bgcolor: "grey.900",
+      color: "white",
+      display: "flex",
+      flexDirection: "column",
+      p: 2,
+    }}
+  >
+    <Typography variant="h6" gutterBottom>
+      Admin Panel
+    </Typography>
+    <List>
+      <ListItem button component={Link} to="/admin/tasks">
+        <ListItemText primary="View Tasks" sx={{ color: "white" }} />
+      </ListItem>
+      <ListItem button component={Link} to="/admin/users">
+        <ListItemText primary="Manage Users" sx={{ color: "white" }} />
+      </ListItem>
+    </List>
   </Box>
 );
 

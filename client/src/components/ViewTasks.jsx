@@ -7,6 +7,8 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
+  Typography,
 } from "@mui/material";
 
 const tasks = [
@@ -16,26 +18,31 @@ const tasks = [
 ];
 
 const ViewTasks = () => (
-  <TableContainer component={Paper}>
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>ID</TableCell>
-          <TableCell>Name</TableCell>
-          <TableCell>Status</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {tasks.map((task) => (
-          <TableRow key={task.id}>
-            <TableCell>{task.id}</TableCell>
-            <TableCell>{task.name}</TableCell>
-            <TableCell>{task.status}</TableCell>
+  <Box p={3}>
+    <Typography variant="h5" gutterBottom>
+      View Tasks
+    </Typography>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Status</TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </TableContainer>
+        </TableHead>
+        <TableBody>
+          {tasks.map((task) => (
+            <TableRow key={task.id}>
+              <TableCell>{task.id}</TableCell>
+              <TableCell>{task.name}</TableCell>
+              <TableCell>{task.status}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </Box>
 );
 
 export default ViewTasks;

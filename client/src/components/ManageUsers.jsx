@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,6 +10,8 @@ import {
   Button,
   TextField,
   Box,
+  Typography,
+  Grid,
 } from "@mui/material";
 
 const initialUsers = [
@@ -40,12 +42,11 @@ const ManageUsers = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("users");
-  }, []);
-
   return (
-    <Box>
+    <Box p={3}>
+      <Typography variant="h5" gutterBottom>
+        Manage Users
+      </Typography>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -63,12 +64,14 @@ const ManageUsers = () => {
                   <TextField
                     value={user.username}
                     onChange={(e) => handleUpdateUser(user.id, e.target.value)}
+                    fullWidth
                   />
                 </TableCell>
                 <TableCell>
                   <Button
                     onClick={() => handleDeleteUser(user.id)}
                     color="secondary"
+                    variant="contained"
                   >
                     Delete
                   </Button>
@@ -78,27 +81,41 @@ const ManageUsers = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Box mt={2}>
-        <TextField
-          label="Username"
-          value={newUser.username}
-          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-          sx={{ ml: 1 }}
-        />
-        <Button
-          onClick={handleAddUser}
-          variant="contained"
-          color="primary"
-          sx={{ ml: 1 }}
-        >
-          Add User
-        </Button>
+      <Box mt={3}>
+        <Typography variant="h6">Add New User</Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={5}>
+            <TextField
+              label="Username"
+              value={newUser.username}
+              onChange={(e) =>
+                setNewUser({ ...newUser, username: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={5}>
+            <TextField
+              label="Password"
+              type="password"
+              value={newUser.password}
+              onChange={(e) =>
+                setNewUser({ ...newUser, password: e.target.value })
+              }
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <Button
+              onClick={handleAddUser}
+              variant="contained"
+              color="primary"
+              fullWidth
+            >
+              Add User
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Box>
   );
