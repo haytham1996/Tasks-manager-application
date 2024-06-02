@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -13,33 +13,110 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
-
-const initialUsers = [
-  { id: 1, username: "user1" },
-  { id: 2, username: "user2" },
-  // Add more users as needed
-];
+import LoadingButton from "@mui/lab/LoadingButton";
+import authApi from "../api/authApi";
+import userApi from "../api/userApi";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState(initialUsers);
-  const [newUser, setNewUser] = useState({ username: "", password: "" });
+  const [users, setUsers] = useState([]);
+  const [newUser, setNewUser] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [usernameErrText, setUsernameErrText] = useState("");
+  const [passwordErrText, setPasswordErrText] = useState("");
+  const [confirmPasswordErrText, setConfirmPasswordErrText] = useState("");
 
-  const handleAddUser = () => {
-    const nextId = users.length
-      ? Math.max(users.map((user) => user.id)) + 1
-      : 1;
-    setUsers([...users, { id: nextId, username: newUser.username }]);
-    setNewUser({ username: "", password: "" });
+  const fetchUsers = async () => {
+    try {
+      const usersData = await userApi.getAll();
+      setUsers(usersData);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
   };
 
-  const handleDeleteUser = (id) => {
-    setUsers(users.filter((user) => user.id !== id));
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleAddUser = async () => {
+    setUsernameErrText("");
+    setPasswordErrText("");
+    setConfirmPasswordErrText("");
+
+    const username = newUser.username.trim();
+    const password = newUser.password.trim();
+    const confirmPassword = newUser.confirmPassword.trim();
+
+    let err = false;
+
+    if (username === "") {
+      err = true;
+      setUsernameErrText("Please fill this field");
+    }
+    if (password === "") {
+      err = true;
+      setPasswordErrText("Please fill this field");
+    }
+    if (confirmPassword === "") {
+      err = true;
+      setConfirmPasswordErrText("Please fill this field");
+    }
+    if (password !== confirmPassword) {
+      err = true;
+      setConfirmPasswordErrText("Confirm password not match");
+    }
+
+    if (err) return;
+
+    setLoading(true);
+
+    try {
+      const res = await authApi.signup({
+        username,
+        password,
+        confirmPassword,
+      });
+      setLoading(false);
+      // Refresh the user list to include the newly added user
+      fetchUsers();
+      setNewUser({ username: "", password: "", confirmPassword: "" });
+    } catch (err) {
+      const errors = err.data.errors;
+      errors.forEach((e) => {
+        if (e.param === "username") {
+          setUsernameErrText(e.msg);
+        }
+        if (e.param === "password") {
+          setPasswordErrText(e.msg);
+        }
+        if (e.param === "confirmPassword") {
+          setConfirmPasswordErrText(e.msg);
+        }
+      });
+      setLoading(false);
+    }
   };
 
-  const handleUpdateUser = (id, username) => {
-    setUsers(
-      users.map((user) => (user.id === id ? { ...user, username } : user))
-    );
+  const handleDeleteUser = async (id) => {
+    try {
+      await userApi.delete(id);
+      fetchUsers(); // Refresh the user list after deletion
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
+  };
+
+  const handleUpdateUser = async (id, username) => {
+    try {
+      await userApi.update(id, { username });
+      fetchUsers(); // Refresh the user list after update
+    } catch (error) {
+      console.error("Failed to update user:", error);
+    }
   };
 
   return (
@@ -84,7 +161,7 @@ const ManageUsers = () => {
       <Box mt={3}>
         <Typography variant="h6">Add New User</Typography>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={4}>
             <TextField
               label="Username"
               value={newUser.username}
@@ -92,9 +169,11 @@ const ManageUsers = () => {
                 setNewUser({ ...newUser, username: e.target.value })
               }
               fullWidth
+              error={usernameErrText !== ""}
+              helperText={usernameErrText}
             />
           </Grid>
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={4}>
             <TextField
               label="Password"
               type="password"
@@ -103,17 +182,33 @@ const ManageUsers = () => {
                 setNewUser({ ...newUser, password: e.target.value })
               }
               fullWidth
+              error={passwordErrText !== ""}
+              helperText={passwordErrText}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Confirm Password"
+              type="password"
+              value={newUser.confirmPassword}
+              onChange={(e) =>
+                setNewUser({ ...newUser, confirmPassword: e.target.value })
+              }
+              fullWidth
+              error={confirmPasswordErrText !== ""}
+              helperText={confirmPasswordErrText}
             />
           </Grid>
           <Grid item xs={12} sm={2}>
-            <Button
+            <LoadingButton
               onClick={handleAddUser}
               variant="contained"
               color="primary"
               fullWidth
+              loading={loading}
             >
               Add User
-            </Button>
+            </LoadingButton>
           </Grid>
         </Grid>
       </Box>
