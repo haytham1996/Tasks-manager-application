@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import authUtils from "../../utils/authUtils";
 import Loading from "../common/Loading";
-import assets from "../../assets";
 
 const AuthLayout = () => {
   const navigate = useNavigate();

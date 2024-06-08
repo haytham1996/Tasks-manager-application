@@ -13,11 +13,14 @@ const AppLayout = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("heeere");
     const checkAuth = async () => {
       const user = await authUtils.isAuthenticated();
+      console.log(user);
       if (!user) {
         navigate("/login");
       } else {
+        if (user.role === "admin") navigate("/admin");
         // save user
         dispatch(setUser(user));
         setLoading(false);

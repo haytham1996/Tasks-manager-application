@@ -46,7 +46,9 @@ const Login = () => {
     try {
       const res = await authApi.login({ username, password });
       setLoading(false);
+      console.log(res.token);
       localStorage.setItem("token", res.token);
+      // TODO navigate to interface admin if the user is admin
       navigate("/");
     } catch (err) {
       const errors = err.data.errors;

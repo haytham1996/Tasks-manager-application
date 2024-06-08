@@ -101,7 +101,7 @@ exports.getAll = async (req, res) => {
       position: task.position,
       section: task.section.title,
       board: task.section.board.title,
-      username: task.section.board.user.username,
+      username: task.section.board.user?.username,
     }));
 
     res.status(200).json(formattedTasks);

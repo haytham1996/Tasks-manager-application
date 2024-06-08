@@ -14,8 +14,8 @@ import Board from "./pages/Board";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import AdminLayout from "./components/layout/AdminLayout"; // New AdminLayout component
-import ViewTasks from "./components/ViewTasks";
-import ManageUsers from "./components/ManageUsers";
+import ViewTasks from "./pages/ViewTasks";
+import ManageUsers from "./pages/ManageUsers";
 
 function App() {
   const theme = createTheme({

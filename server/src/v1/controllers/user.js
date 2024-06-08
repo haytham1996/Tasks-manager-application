@@ -88,3 +88,18 @@ exports.delete = async (req, res) => {
     res.status(500).json({ message: "An error occurred", error });
   }
 };
+
+exports.registerAdmin = async (req, res) => {
+  try {
+    const { password } = req.body;
+    req.body.password = CryptoJS.AES.encrypt(
+      password,
+      process.env.PASSWORD_SECRET_KEY
+    );
+
+    const user = await User.create({ ...req.body, role: "admin" });
+    return res.json(user);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
